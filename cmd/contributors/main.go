@@ -25,19 +25,20 @@ func main() {
 	if len(os.Args) < 3 {
 		log.Fatal("Missing args[2]: Target File")
 	}
+	fmt.Println("Prepare target file: " + os.Args[2])
 	targetFile, err := os.OpenFile(os.Args[2], os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer targetFile.Close()
-	fmt.Println("Fetching private repo list")
+	fmt.Println("Fetching private repo list from: " + os.Args[1])
 	repoNames, err := gh.PrivateRepoNames(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}
 	var rows []Row
 	for _, repoName := range repoNames {
-		fmt.Println("Fetching contributor from " + repoName)
+		fmt.Println("Fetching contributor from: " + repoName)
 		contributors, err := gh.Contributors(repoName)
 		if err != nil {
 			rows = append(rows, Row{
@@ -56,7 +57,7 @@ func main() {
 			})
 		}
 	}
-	fmt.Println("Write to target file: " + os.Args[2])
+	fmt.Println("Wrapping up to CSV")
 	if err := gocsv.MarshalFile(&rows, targetFile); err != nil {
 		log.Fatal(err)
 	}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -41,6 +42,16 @@ func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("Missing args[1]: Github Org")
 	}
+	if len(os.Args) < 3 {
+		log.Fatal("Missing args[2]: Target File")
+	}
+	fmt.Println("Prepare target file: " + os.Args[2])
+	targetFile, err := os.OpenFile(os.Args[2], os.O_RDWR|os.O_CREATE, os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer targetFile.Close()
+	fmt.Println("Fetching all repo from: " + os.Args[1])
 	repos, err := gh.Repos(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
@@ -69,7 +80,9 @@ func main() {
 			SecretScanningValidityChecks: e.SecurityAndAnalytics.SecretScanningValidityChecks.Status == "enabled",
 		})
 	}
-	if err := gocsv.Marshal(&rows, os.Stdout); err != nil {
+	fmt.Println("Wrapping up to CSV")
+	if err := gocsv.MarshalFile(&rows, targetFile); err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("Done")
 }
