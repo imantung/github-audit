@@ -45,17 +45,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	report := convertToRows(repos)
-	if err := gocsv.Marshal(&report, os.Stdout); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func convertToRows(repos []gh.Repo) []Row {
 	var rows []Row
 	for _, e := range repos {
-		row := Row{
+		rows = append(rows, Row{
 			ID:                           e.ID,
 			Name:                         e.Name,
 			FullName:                     e.FullName,
@@ -75,9 +67,9 @@ func convertToRows(repos []gh.Repo) []Row {
 			SecretScanningPushProtection: e.SecurityAndAnalytics.SecretScanningPushProtection.Status == "enabled",
 			DependabotSecurityUpdates:    e.SecurityAndAnalytics.DependabotSecurityUpdates.Status == "enabled",
 			SecretScanningValidityChecks: e.SecurityAndAnalytics.SecretScanningValidityChecks.Status == "enabled",
-		}
-
-		rows = append(rows, row)
+		})
 	}
-	return rows
+	if err := gocsv.Marshal(&rows, os.Stdout); err != nil {
+		log.Fatal(err)
+	}
 }
