@@ -30,4 +30,9 @@ type (
 	Status struct {
 		Status string `json:"status"`
 	}
+	Contributor struct {
+		Login         string `json:"login"`
+		Type          string `json:"type"`
+		Contributions int    `json:"contributions"`
+	}
 )
