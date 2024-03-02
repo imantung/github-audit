@@ -32,7 +32,7 @@ func main() {
 	}
 	defer targetFile.Close()
 	fmt.Println("Fetching private repo list from: " + os.Args[1])
-	repoNames, err := gh.PrivateRepoNames(os.Args[1])
+	repoNames, err := gh.RepoNames(os.Args[1], "private")
 	if err != nil {
 		log.Fatal(err)
 	}

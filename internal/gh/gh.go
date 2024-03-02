@@ -22,9 +22,9 @@ func Repos(org string) ([]Repo, error) {
 	return repos, nil
 }
 
-// Equivalent with: gh repo list ion-mobility --visibility=private --json=nameWithOwner --jq='.[].nameWithOwner' -L 500
-func PrivateRepoNames(org string) ([]string, error) {
-	b, err := exec.Command("gh", "repo", "list", org, "--visibility=private", "--json=nameWithOwner", "--jq=.[].nameWithOwner", "-L=500").CombinedOutput()
+// Equivalent with: gh repo list ORG --visibility VISIBILITY --json=nameWithOwner --jq='.[].nameWithOwner' -L 500
+func RepoNames(org, visibility string) ([]string, error) {
+	b, err := exec.Command("gh", "repo", "list", org, "--visibility", visibility, "--json=nameWithOwner", "--jq=.[].nameWithOwner", "-L=500").CombinedOutput()
 	if err != nil {
 		return nil, errors.New(string(b))
 	}
@@ -33,7 +33,6 @@ func PrivateRepoNames(org string) ([]string, error) {
 }
 
 // Equivalent with: gh api repos/REPO_FULL_NAME/contributors --paginate
-// repoName is repo's fullname
 func Contributors(repoName string) ([]Contributor, error) {
 	b, err := exec.Command("gh", "api", "repos/"+repoName+"/contributors", "--paginate").CombinedOutput()
 	if err != nil {
@@ -44,6 +43,19 @@ func Contributors(repoName string) ([]Contributor, error) {
 		return nil, err
 	}
 	return contributors, nil
+}
+
+// Equivalent with: gh api repos/REPO_FULL_NAME/collaborators --paginate
+func Collaborators(repoName string) ([]Collaborator, error) {
+	b, err := exec.Command("gh", "api", "repos/"+repoName+"/collaborators", "--paginate").CombinedOutput()
+	if err != nil {
+		return nil, errors.New(string(b))
+	}
+	var collaborator []Collaborator
+	if err := json.Unmarshal(b, &collaborator); err != nil {
+		return nil, err
+	}
+	return collaborator, nil
 }
 
 // gh api repos/ion-mobility/hmi/collaborators

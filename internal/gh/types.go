@@ -35,4 +35,9 @@ type (
 		Type          string `json:"type"`
 		Contributions int    `json:"contributions"`
 	}
+	Collaborator struct {
+		Login    string `json:"login"`
+		Type     string `json:"type"`
+		RoleName string `json:"role_name"`
+	}
 )
