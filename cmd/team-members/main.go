@@ -11,10 +11,8 @@ import (
 
 type (
 	Row struct {
-		RepoName string `csv:"repo fullname"`
-		UserName string `csv:"user name"`
-		UserType string `csv:"user type"`
-		Role     string `csv:"role"`
+		Team   string `csv:"team"`
+		Member string `csv:"member"`
 	}
 )
 
@@ -28,39 +26,35 @@ func main() {
 	org := os.Args[1]
 	targetFilename := os.Args[2]
 
-	fmt.Println("Open target file: " + targetFilename)
+	fmt.Println("Prepare target file: " + targetFilename)
 	targetFile, err := os.OpenFile(targetFilename, os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer targetFile.Close()
 
-	fmt.Println("Retrieve all repos from: " + org)
-	repoNames, err := gh.RetrieveRepoNames(org, "all")
+	fmt.Println("Retrieve teams from: " + org)
+	teams, err := gh.RetrieveTeams(org)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	var rows []Row
-	for _, repoName := range repoNames {
-		fmt.Println("Retrieve collaborator from: " + repoName)
-		collaborators, err := gh.RetrieveCollaborators(repoName)
+	for _, team := range teams {
+		members, err := gh.RetrieveTeamMembers(org, team)
 		if err != nil {
 			rows = append(rows, Row{
-				RepoName: repoName,
-				UserName: err.Error(),
-				UserType: "",
+				Team:   team,
+				Member: err.Error(),
 			})
 		}
-		for _, collaborator := range collaborators {
+		for _, member := range members {
 			rows = append(rows, Row{
-				RepoName: repoName,
-				UserName: collaborator.Login,
-				UserType: collaborator.Type,
-				Role:     collaborator.RoleName,
+				Team:   team,
+				Member: member,
 			})
 		}
 	}
+
 	fmt.Println("Wrapping up to CSV")
 	if err := gocsv.MarshalFile(&rows, targetFile); err != nil {
 		log.Fatal(err)

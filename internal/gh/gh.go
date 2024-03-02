@@ -10,7 +10,7 @@ import (
 // https://docs.github.com/rest
 
 // Equivalent with: gh api orgs/ORG/repos --paginate“
-func Repos(org string) ([]Repo, error) {
+func RetrieveRepos(org string) ([]Repo, error) {
 	b, err := exec.Command("gh", "api", "orgs/"+org+"/repos", "--paginate").CombinedOutput()
 	if err != nil {
 		return nil, errors.New(string(b))
@@ -23,7 +23,7 @@ func Repos(org string) ([]Repo, error) {
 }
 
 // Equivalent with: gh repo list ORG --visibility VISIBILITY --json=nameWithOwner --jq='.[].nameWithOwner' -L 500
-func RepoNames(org, visibility string) ([]string, error) {
+func RetrieveRepoNames(org, visibility string) ([]string, error) {
 	b, err := exec.Command("gh", "repo", "list", org, "--visibility", visibility, "--json=nameWithOwner", "--jq=.[].nameWithOwner", "-L=500").CombinedOutput()
 	if err != nil {
 		return nil, errors.New(string(b))
@@ -33,7 +33,7 @@ func RepoNames(org, visibility string) ([]string, error) {
 }
 
 // Equivalent with: gh api repos/REPO_FULL_NAME/contributors --paginate
-func Contributors(repoName string) ([]Contributor, error) {
+func RetrieveContributors(repoName string) ([]Contributor, error) {
 	b, err := exec.Command("gh", "api", "repos/"+repoName+"/contributors", "--paginate").CombinedOutput()
 	if err != nil {
 		return nil, errors.New(string(b))
@@ -46,7 +46,7 @@ func Contributors(repoName string) ([]Contributor, error) {
 }
 
 // Equivalent with: gh api repos/REPO_FULL_NAME/collaborators --paginate
-func Collaborators(repoName string) ([]Collaborator, error) {
+func RetrieveCollaborators(repoName string) ([]Collaborator, error) {
 	b, err := exec.Command("gh", "api", "repos/"+repoName+"/collaborators", "--paginate").CombinedOutput()
 	if err != nil {
 		return nil, errors.New(string(b))
@@ -58,8 +58,21 @@ func Collaborators(repoName string) ([]Collaborator, error) {
 	return collaborator, nil
 }
 
-// gh api repos/ion-mobility/hmi/collaborators
+// Equivalent with: gh api orgs/ion-mobility/members --jq '.[].login'
+func RetrieveTeams(org string) ([]string, error) {
+	b, err := exec.Command("gh", "api", "orgs/"+org+"/teams", "--jq", ".[].name", "--paginate").CombinedOutput()
+	if err != nil {
+		return nil, errors.New(string(b))
+	}
+	names := strings.Split(strings.TrimSpace(string(b)), "\n")
+	return names, nil
+}
 
-// gh api orgs/ion-mobility/memberships/imantung
-
-// gh api users/ion-mobility/members
+func RetrieveTeamMembers(org, team string) ([]string, error) {
+	b, err := exec.Command("gh", "api", "orgs/"+org+"/teams/"+team+"/members", "--jq", ".[].login", "--paginate").CombinedOutput()
+	if err != nil {
+		return nil, errors.New(string(b))
+	}
+	names := strings.Split(strings.TrimSpace(string(b)), "\n")
+	return names, nil
+}

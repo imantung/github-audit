@@ -52,7 +52,7 @@ func main() {
 	}
 	defer targetFile.Close()
 	fmt.Println("Fetching all repo from: " + os.Args[1])
-	repos, err := gh.Repos(os.Args[1])
+	repos, err := gh.RetrieveRepos(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}
