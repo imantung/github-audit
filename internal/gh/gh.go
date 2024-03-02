@@ -76,3 +76,12 @@ func RetrieveTeamMembers(org, team string) ([]string, error) {
 	names := strings.Split(strings.TrimSpace(string(b)), "\n")
 	return names, nil
 }
+
+func RetrieveTeamRepos(org, team string) ([]string, error) {
+	b, err := exec.Command("gh", "api", "orgs/"+org+"/teams/"+team+"/repos", "--jq", ".[].full_name", "--paginate").CombinedOutput()
+	if err != nil {
+		return nil, errors.New(string(b))
+	}
+	names := strings.Split(strings.TrimSpace(string(b)), "\n")
+	return names, nil
+}

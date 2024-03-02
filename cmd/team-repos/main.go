@@ -11,8 +11,8 @@ import (
 
 type (
 	Row struct {
-		Team   string `csv:"team"`
-		Member string `csv:"member"`
+		Team string `csv:"team"`
+		Repo string `csv:"repo"`
 	}
 )
 
@@ -40,18 +40,18 @@ func main() {
 	}
 	var rows []Row
 	for _, team := range teams {
-		fmt.Println("Retrieve team members from: " + team)
-		members, err := gh.RetrieveTeamMembers(org, team)
+		fmt.Println("Retrieve team repos from: " + team)
+		repos, err := gh.RetrieveTeamRepos(org, team)
 		if err != nil {
 			rows = append(rows, Row{
-				Team:   team,
-				Member: err.Error(),
+				Team: team,
+				Repo: err.Error(),
 			})
 		}
-		for _, member := range members {
+		for _, repo := range repos {
 			rows = append(rows, Row{
-				Team:   team,
-				Member: member,
+				Team: team,
+				Repo: repo,
 			})
 		}
 	}
