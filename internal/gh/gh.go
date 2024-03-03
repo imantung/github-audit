@@ -22,9 +22,19 @@ func RetrieveRepos(org string) ([]Repo, error) {
 	return repos, nil
 }
 
+// Equivalent with: gh api orgs/ORG/repos --jq .[].full_name --paginate“
+func RetrieveRepoNames(org string) ([]string, error) {
+	b, err := exec.Command("gh", "api", "orgs/"+org+"/repos", "--jq", ".[].full_name", "--paginate").CombinedOutput()
+	if err != nil {
+		return nil, errors.New(string(b))
+	}
+	names := strings.Split(strings.TrimSpace(string(b)), "\n")
+	return names, nil
+}
+
 // Equivalent with: gh repo list ORG --visibility VISIBILITY --json=nameWithOwner --jq='.[].nameWithOwner' -L 500
-func RetrieveRepoNames(org, visibility string) ([]string, error) {
-	b, err := exec.Command("gh", "repo", "list", org, "--visibility", visibility, "--json=nameWithOwner", "--jq=.[].nameWithOwner", "-L=500").CombinedOutput()
+func RetrievePrivateRepoNames(org string) ([]string, error) {
+	b, err := exec.Command("gh", "repo", "list", org, "--visibility", "private", "--json=nameWithOwner", "--jq=.[].nameWithOwner", "-L=500").CombinedOutput()
 	if err != nil {
 		return nil, errors.New(string(b))
 	}
@@ -85,3 +95,23 @@ func RetrieveTeamRepos(org, team string) ([]string, error) {
 	names := strings.Split(strings.TrimSpace(string(b)), "\n")
 	return names, nil
 }
+
+func RetrieveArtifactTotalCount(repo string) (string, error) {
+	b, err := exec.Command("gh", "api", "repos/"+repo+"/actions/artifacts", "--jq", ".total_count").CombinedOutput()
+	if err != nil {
+		return "", errors.New(string(b))
+	}
+	return strings.TrimSpace(string(b)), nil
+}
+
+func RetrieveRunTotalCount(repo string) (string, error) {
+	b, err := exec.Command("gh", "api", "repos/"+repo+"/actions/runs", "--jq", ".total_count").CombinedOutput()
+	if err != nil {
+		return "", errors.New(string(b))
+	}
+	return strings.TrimSpace(string(b)), nil
+}
+
+// gh api repos/ion-mobility/v2x_backend/actions/artifacts --jq '.total_count'
+
+// gh api repos/ion-mobility/v2x_backend/actions/runs --jq '.total_count'

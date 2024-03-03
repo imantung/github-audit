@@ -35,7 +35,7 @@ func main() {
 	defer targetFile.Close()
 
 	fmt.Println("Retrive private repos from: " + org)
-	repoNames, err := gh.RetrieveRepoNames(org, "private")
+	repoNames, err := gh.RetrievePrivateRepoNames(org)
 	if err != nil {
 		log.Fatal(err)
 	}

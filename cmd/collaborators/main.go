@@ -36,7 +36,7 @@ func main() {
 	defer targetFile.Close()
 
 	fmt.Println("Retrieve all repos from: " + org)
-	repoNames, err := gh.RetrieveRepoNames(org, "all")
+	repoNames, err := gh.RetrieveRepoNames(org)
 	if err != nil {
 		log.Fatal(err)
 	}
