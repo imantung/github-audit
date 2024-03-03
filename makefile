@@ -1,5 +1,5 @@
 generates: 
-	mkdir output
+	mkdir output_$(GITHUB_ORG)_$$(date +"%m%d%Y")
 	go run cmd/repos/main.go $(GITHUB_ORG) 			output_$(GITHUB_ORG)_$$(date +"%m%d%Y")/repos.csv
 	go run cmd/contributors/main.go $(GITHUB_ORG) 	output_$(GITHUB_ORG)_$$(date +"%m%d%Y")/contributors.csv
 	go run cmd/collaborators/main.go $(GITHUB_ORG) 	output_$(GITHUB_ORG)_$$(date +"%m%d%Y")/collaborators.csv

@@ -11,7 +11,7 @@ import (
 
 type (
 	Row struct {
-		RepoName      string `csv:"repo fullname"`
+		Repo          string `csv:"repo"`
 		ArtifactCount string `csv:"artifact count"`
 		RunCount      string `csv:"run count"`
 	}
@@ -55,7 +55,7 @@ func main() {
 		}
 
 		rows = append(rows, Row{
-			RepoName:      repoName,
+			Repo:          repoName,
 			ArtifactCount: artifactCount,
 			RunCount:      runCount,
 		})

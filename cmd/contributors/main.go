@@ -11,7 +11,7 @@ import (
 
 type (
 	Row struct {
-		RepoName      string `csv:"repo fullname"`
+		Repo          string `csv:"repo"`
 		UserName      string `csv:"user name"`
 		UserType      string `csv:"user type"`
 		Contributions int    `csv:"contributions"`
@@ -46,7 +46,7 @@ func main() {
 		contributors, err := gh.RetrieveContributors(repoName)
 		if err != nil {
 			rows = append(rows, Row{
-				RepoName:      repoName,
+				Repo:          repoName,
 				UserName:      err.Error(),
 				UserType:      "",
 				Contributions: -1,
@@ -54,7 +54,7 @@ func main() {
 		}
 		for _, contributor := range contributors {
 			rows = append(rows, Row{
-				RepoName:      repoName,
+				Repo:          repoName,
 				UserName:      contributor.Login,
 				UserType:      contributor.Type,
 				Contributions: contributor.Contributions,
