@@ -83,7 +83,11 @@ func RetrieveTeamMembers(org, team string) ([]string, error) {
 	if err != nil {
 		return nil, errors.New(string(b))
 	}
-	names := strings.Split(strings.TrimSpace(string(b)), "\n")
+	s := strings.TrimSpace(string(b))
+	var names []string
+	if len(s) > 0 {
+		names = strings.Split(s, "\n")
+	}
 	return names, nil
 }
 
@@ -92,7 +96,11 @@ func RetrieveTeamRepos(org, team string) ([]string, error) {
 	if err != nil {
 		return nil, errors.New(string(b))
 	}
-	names := strings.Split(strings.TrimSpace(string(b)), "\n")
+	s := strings.TrimSpace(string(b))
+	var names []string
+	if len(s) > 0 {
+		names = strings.Split(s, "\n")
+	}
 	return names, nil
 }
 
@@ -111,7 +119,3 @@ func RetrieveRunTotalCount(repo string) (string, error) {
 	}
 	return strings.TrimSpace(string(b)), nil
 }
-
-// gh api repos/ion-mobility/v2x_backend/actions/artifacts --jq '.total_count'
-
-// gh api repos/ion-mobility/v2x_backend/actions/runs --jq '.total_count'
