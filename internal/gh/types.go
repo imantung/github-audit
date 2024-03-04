@@ -40,4 +40,12 @@ type (
 		Type     string `json:"type"`
 		RoleName string `json:"role_name"`
 	}
+	Team struct {
+		Name         string    `json:"name"`
+		Description  string    `json:"description"`
+		CreatedAt    time.Time `json:"created_at"`
+		MembersCount int       `json:"members_count"`
+		ReposCount   int       `json:"repos_count"`
+		Parent       *Team     `json:"parent"`
+	}
 )

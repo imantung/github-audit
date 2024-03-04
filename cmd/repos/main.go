@@ -45,14 +45,18 @@ func main() {
 	if len(os.Args) < 3 {
 		log.Fatal("Missing args[2]: Target File")
 	}
-	fmt.Println("Prepare target file: " + os.Args[2])
-	targetFile, err := os.OpenFile(os.Args[2], os.O_RDWR|os.O_CREATE, os.ModePerm)
+	org := os.Args[1]
+	targetFilename := os.Args[2]
+
+	fmt.Println("Prepare target file: " + targetFilename)
+	targetFile, err := os.OpenFile(targetFilename, os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer targetFile.Close()
-	fmt.Println("Fetching all repo from: " + os.Args[1])
-	repos, err := gh.RetrieveRepos(os.Args[1])
+
+	fmt.Println("Retrieve all repo from: " + org)
+	repos, err := gh.RetrieveRepos(org)
 	if err != nil {
 		log.Fatal(err)
 	}

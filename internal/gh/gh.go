@@ -78,6 +78,18 @@ func RetrieveTeams(org string) ([]string, error) {
 	return names, nil
 }
 
+func RetrieveTeamDetails(orgName, teamName string) (*Team, error) {
+	b, err := exec.Command("gh", "api", "orgs/"+orgName+"/teams/"+teamName).CombinedOutput()
+	if err != nil {
+		return nil, errors.New(string(b))
+	}
+	var team Team
+	if err := json.Unmarshal(b, &team); err != nil {
+		return nil, err
+	}
+	return &team, nil
+}
+
 func RetrieveTeamMembers(org, team string) ([]string, error) {
 	b, err := exec.Command("gh", "api", "orgs/"+org+"/teams/"+team+"/members", "--jq", ".[].login", "--paginate").CombinedOutput()
 	if err != nil {
